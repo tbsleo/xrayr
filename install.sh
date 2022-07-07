@@ -95,20 +95,20 @@ install_XrayR() {
 	cd /usr/local/XrayR/
 
     if  [ $# == 0 ] ;then
-        last_version=$(curl -Ls "https://api.github.com/repos/missuo/XrayR/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        last_version=$(curl -Ls "https://api.github.com/repos/xrabbitz/XrayR/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ ! -n "$last_version" ]]; then
             echo -e "${red}检测 XrayR 版本失败，可能是超出 Github API 限制，请稍后再试，或手动指定 XrayR 版本安装${plain}"
             exit 1
         fi
         echo -e "检测到 XrayR 最新版本：${last_version}，开始安装"
-        wget -N --no-check-certificate -O /usr/local/XrayR/XrayR-linux-64.zip https://github.com/missuo/XrayR/releases/download/${last_version}/XrayR-linux-64.zip
+        wget -N --no-check-certificate -O /usr/local/XrayR/XrayR-linux-64.zip https://github.com/xrabbitz/XrayR/releases/download/${last_version}/XrayR-linux-64.zip
         if [[ $? -ne 0 ]]; then
             echo -e "${red}下载 XrayR 失败，请确保你的服务器能够下载 Github 的文件${plain}"
             exit 1
         fi
     else
         last_version=$1
-        url="https://github.com/missuo/XrayR/releases/download/${last_version}/XrayR-linux-64.zip"
+        url="https://github.com/xrabbitz/XrayR/releases/download/${last_version}/XrayR-linux-64.zip"
         echo -e "开始安装 XrayR v$1"
         wget -N --no-check-certificate -O /usr/local/XrayR/XrayR-linux-64.zip ${url}
         if [[ $? -ne 0 ]]; then
@@ -122,7 +122,7 @@ install_XrayR() {
     chmod +x XrayR
     mkdir /etc/XrayR/ -p
     rm /etc/systemd/system/XrayR.service -f
-    file="https://github.com/missuo/XrayR-V2Board/raw/main/XrayR.service"
+    file="https://github.com/xrabbitz/XrayRS/raw/main/XrayR.service"
     wget -N --no-check-certificate -O /etc/systemd/system/XrayR.service ${file}
     #cp -f XrayR.service /etc/systemd/system/
     systemctl daemon-reload
@@ -135,7 +135,6 @@ install_XrayR() {
     if [[ ! -f /etc/XrayR/config.yml ]]; then
         cp config.yml /etc/XrayR/
         echo -e ""
-        echo -e "全新安装，请先参看教程：https://github.com/missuo/XrayR，配置必要的内容"
     else
         systemctl start XrayR
         sleep 2
@@ -152,7 +151,7 @@ install_XrayR() {
         cp dns.json /etc/XrayR/
     fi
     
-    curl -o /usr/bin/XrayR -Ls https://raw.githubusercontent.com/missuo/XrayR-V2Board/master/XrayR.sh
+    curl -o /usr/bin/XrayR -Ls https://raw.githubusercontent.com/xrabbitz/XrayRS/master/XrayR.sh
     chmod +x /usr/bin/XrayR
     
     # 设置节点序号
@@ -180,37 +179,15 @@ install_XrayR() {
     echo "您选择的协议为 ${node_type}"
     echo "---------------------------"
     echo ""
-    
-    # 关闭AEAD强制加密
-    # echo "选择是否关闭AEAD强制加密(默认开启AEAD)"
-    # echo ""
-    # read -p "请输入您的选择(1为开启,0为关闭):" aead_disable
-    # [ -z "${aead_disable}" ]
-   
-
-    # # 如果不输入默认为开启
-    # if [ ! $aead_disable ]; then
-    # aead_disable="1"
-    # fi
-
-    # echo "---------------------------"
-    # echo "您的设置为 ${aead_disable}"
-    # echo "---------------------------"
-    # echo ""
 
     # Writing json
     echo "正在尝试写入配置文件..."
-    wget https://cdn.jsdelivr.net/gh/missuo/XrayR-V2Board/config.yml -O /etc/XrayR/config.yml
+    wget https://raw.githubusercontent.com/xrabbitz/XrayRS/main/config.yml -O /etc/XrayR/config.yml
     sed -i "s/NodeID:.*/NodeID: ${node_id}/g" /etc/XrayR/config.yml
     sed -i "s/NodeType:.*/NodeType: ${node_type}/g" /etc/XrayR/config.yml
     echo ""
     echo "写入完成，正在尝试重启XrayR服务..."
     echo
-    
-    # if [ $aead_disable == "0" ]; then
-    # echo "正在关闭AEAD强制加密..."
-    # sed -i 'N;18 i Environment="XRAY_VMESS_AEAD_FORCED=false"' /etc/systemd/system/XrayR.service
-    # fi
 
     systemctl daemon-reload
     XrayR restart
@@ -220,8 +197,6 @@ install_XrayR() {
     systemctl stop firewalld
     echo "XrayR服务已经完成重启，请愉快地享用！"
     echo
-    #curl -o /usr/bin/XrayR-tool -Ls https://raw.githubusercontent.com/missuo/XrayR/master/XrayR-tool
-    #chmod +x /usr/bin/XrayR-tool
     echo -e ""
     echo "XrayR 管理脚本使用方法: "
     echo "------------------------------------------"
@@ -240,10 +215,6 @@ install_XrayR() {
     echo "XrayR uninstall          - 卸载 XrayR"
     echo "XrayR version            - 查看 XrayR 版本"
     echo "------------------------------------------"
-    echo "One-Step Script Based on XrayR-Release"
-    echo "Telegram: https://t.me/missuo"
-    echo "Github: https://github.com/missuo/XrayR-V2Board"
-    echo "Powered by Vincent"
 }
 
 echo -e "${green}开始安装${plain}"
