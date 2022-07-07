@@ -167,7 +167,7 @@ install_XrayR() {
     # 选择协议
     echo "选择节点类型(默认V2ray)"
     echo ""
-    read -p "请输入你使用的协议(V2ray, Shadowsocks, Trojan):" node_type
+    read -p "请输入你使用的协议(默认V2ray, Shadowsocks, Trojan):" node_type
     [ -z "${node_type}" ]
     
     # 如果不输入默认为V2ray
