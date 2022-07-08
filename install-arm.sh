@@ -132,22 +132,6 @@ install_XrayR() {
     cp geoip.dat /etc/XrayR/
     cp geosite.dat /etc/XrayR/ 
 
-    if [[ ! -f /etc/XrayR/config.yml ]]; then
-        cp config.yml /etc/XrayR/
-        echo -e ""
-        echo -e "全新安装，请先参看教程：https://github.com/missuo/XrayR-V2board，配置必要的内容"
-    else
-        systemctl start XrayR
-        sleep 2
-        check_status
-        echo -e ""
-        if [[ $? == 0 ]]; then
-            echo -e "${green}XrayR 重启成功${plain}"
-        else
-            echo -e "${red}XrayR 可能启动失败，请稍后使用 XrayR log 查看日志信息，若无法启动，则可能更改了配置格式，请前往 wiki 查看：https://github.com/missuo/XrayR/wiki${plain}"
-        fi
-    fi
-
     if [[ ! -f /etc/XrayR/dns.json ]]; then
         cp dns.json /etc/XrayR/
     fi
